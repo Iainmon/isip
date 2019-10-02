@@ -1,0 +1,17 @@
+0000 0000
+1111 1111 // Sender has something to send
+1111 1111
+1111 1111
+1111 1111
+1111 1111
+...
+1111 1111 // Reciever starts listening for message prefix
+1111 1111
+1111 1111
+0000 0000 // Message begins in the next byte
+0000 0010 // Size of the message
+0000 0011 // Command number 3
+0000 0101 // Parameter 5
+0000 0000 // Reciever stops listening until a positive listen command comes again
+0000 0000
+...
