@@ -1,4 +1,4 @@
-# ISIP Iain's Serial Instruction Protocall
+# ISIP Iain's Serial Instruction Protocol
 
 A simple way for data to be sent across 2 pins with 2 different devices running at different speeds. See data_transmission_example.txt for a refference of what the message timeline looks like. The clock pin will negate it's value for every bit sent.
 
