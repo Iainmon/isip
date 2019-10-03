@@ -4,19 +4,12 @@
 typedef char int1_t;
 typedef unsigned char uint1_t;
 
-bool clockWire() {
-    return false;
-}
-bool dataWire() {
-    return false;
-}
-
 const bool BitBuffer::allBitsAND() {
     return bits[0] && bits[1] && bits[2] && bits[3] && bits[4] && bits[5] && bits[6] && bits[7];
 }
 
 const bool BitBuffer::clockSignalDidChange() {
-    currentClockSignal = clockWire();
+    currentClockSignal = readClockBit();
 
     if (currentClockSignal == !lastClockSignal) {
         lastClockSignal = currentClockSignal;
@@ -33,25 +26,32 @@ BitBuffer::BitBuffer() {
 
     *byteStorage = new Byte[255];
     for (int i = 0; i < 255; i++) {
-        bits[i] = new Byte(&bits);
+        bits[i] = new Byte(bits);
     }
 
+}
+
+void BitBuffer::registerClockReadFunction(bool (*_clockReadFunction)(void)) {
+    readClockBit = _clockReadFunction;
+}
+void BitBuffer::registerDataReadFunction(bool (*_dataReadFunction)(void)) {
+    readDataBit = _dataReadFunction;
 }
 
 const bool BitBuffer::listenForOpenConnection(const unsigned int scaledClockTime = 16000) {
 
     currentBitAddress = 0;
-    bits[currentBitAddress] = dataWire();
+    bits[currentBitAddress] = readDataBit();
 
     if (bits[currentBitAddress] == true) {
 
-        lastClockSignal = clockWire();
+        lastClockSignal = readClockBit();
         currentBitAddress = 1;
 
         const unsigned int maxIterations = scaledClockTime / 16; // However many operations each iteration takes
         for (unsigned int i = 0; i < maxIterations; i++) {
             if (clockSignalDidChange()) {
-                bits[currentBitAddress] = dataWire();
+                bits[currentBitAddress] = readDataBit();
                 currentBitAddress++;
                 if (currentBitAddress == 8) {
                     if (allBitsAND()) {
@@ -79,7 +79,7 @@ void BitBuffer::recordIncomingData() {
     while (true) {
         if (clockSignalDidChange()) {
             
-            bitValue = dataWire();
+            bitValue = readDataBit();
 
             // Makes sure no comparisons are made until a 0 bit is sent
             if (!zeroBitStarted) {
@@ -119,11 +119,11 @@ void BitBuffer::record() {
 }
 
 void BitBuffer::append() {
-    bits[currentBitAddress] = dataWire();
+    bits[currentBitAddress] = readDataBit();
     currentBitAddress++;
 
     if (currentBitAddress == 8) {
-        byteStorage[currentByteAddress]->setBits(&bits);
+        byteStorage[currentByteAddress]->setBits(bits);
         currentByteAddress++;
         currentBitAddress = 0;
     }
@@ -137,4 +137,8 @@ Byte** BitBuffer::getBytes() {
     }
 
     return bytes;
+}
+
+const byte_t BitBuffer::getByteCount() {
+    return byteCount;
 }

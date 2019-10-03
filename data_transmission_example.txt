@@ -9,7 +9,7 @@
 1111 1111
 1111 1111
 0000 0000 // Message begins in the next byte
-0000 0010 // Size of the message
+0000 0010 // Size of the message (2 bytes), so only read the next 16 bits
 0000 0011 // Command number 3
 0000 0101 // Parameter 5
 0000 0000 // Reciever stops listening until a positive listen command comes again

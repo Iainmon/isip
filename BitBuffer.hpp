@@ -7,6 +7,9 @@ class Byte;
 class BitBuffer {
     private:
 
+    bool (*readClockBit)(void) = nullptr;
+    bool (*readDataBit)(void) = nullptr;
+
     bool currentClockSignal = false;
     bool lastClockSignal = false;
     const bool clockSignalDidChange();
@@ -30,6 +33,10 @@ class BitBuffer {
 
     void recordIncomingData();
 
+    void registerClockReadFunction(bool (*_clockReadFunction)(void));
+    void registerDataReadFunction(bool (*_dataReadFunction)(void));
+
+    const byte_t getByteCount();
     Byte** getBytes();
 
 };
