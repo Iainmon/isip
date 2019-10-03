@@ -24,7 +24,7 @@ BitBuffer::BitBuffer() {
         bits[i] = false;
     }
 
-    *byteStorage = new Byte[255];
+    byteStorage = new Byte[255];
     for (int i = 0; i < 255; i++) {
         bits[i] = new Byte(bits);
     }
@@ -38,7 +38,7 @@ void BitBuffer::registerDataReadFunction(bool (*_dataReadFunction)(void)) {
     readDataBit = _dataReadFunction;
 }
 
-const bool BitBuffer::listenForOpenConnection(const unsigned int scaledClockTime = 16000) {
+const bool BitBuffer::listenForOpenConnection(unsigned int scaledClockTime = 16000) {
 
     currentBitAddress = 0;
     bits[currentBitAddress] = readDataBit();
@@ -123,20 +123,22 @@ void BitBuffer::append() {
     currentBitAddress++;
 
     if (currentBitAddress == 8) {
-        byteStorage[currentByteAddress]->setBits(bits);
+        byteStorage[currentByteAddress].setBits(bits);
         currentByteAddress++;
         currentBitAddress = 0;
     }
 }
 
-Byte** BitBuffer::getBytes() {
-    Byte** bytes = nullptr;
+Byte* BitBuffer::getBytes() {
+    // Byte** bytes = nullptr;
 
-    for (int i = 0; i < byteCount; i++) {
-        bytes[i] = byteStorage[i];
-    }
+    // for (int i = 0; i < byteCount; i++) {
+    //     bytes[i] = byteStorage[i];
+    // }
 
-    return bytes;
+    // return bytes;
+
+    return byteStorage;
 }
 
 const byte_t BitBuffer::getByteCount() {

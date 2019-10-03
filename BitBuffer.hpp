@@ -20,7 +20,7 @@ class BitBuffer {
 
     byte_t byteCount = 0;
     byte_t currentByteAddress = 0;
-    Byte** byteStorage = nullptr;
+    Byte* byteStorage = nullptr;
 
     void append();
 
@@ -29,7 +29,7 @@ class BitBuffer {
     public:
     BitBuffer();
 
-    const bool listenForOpenConnection(const unsigned int scaledClockTime = 16000);
+    const bool listenForOpenConnection(unsigned int scaledClockTime);
 
     void recordIncomingData();
 
@@ -37,6 +37,6 @@ class BitBuffer {
     void registerDataReadFunction(bool (*_dataReadFunction)(void));
 
     const byte_t getByteCount();
-    Byte** getBytes();
+    Byte* getBytes();
 
 };

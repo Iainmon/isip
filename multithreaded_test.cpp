@@ -3,6 +3,8 @@
 #include <thread>
 #include "Byte.hpp"
 #include "Byte.cpp"
+#include "BitBuffer.hpp"
+#include "BitBuffer.cpp"
 #include "Sender.hpp"
 #include "Sender.cpp"
 
@@ -76,8 +78,40 @@ void sender_program(void (*_writeClockFunc)(bit_t), void (*_writeDataFunc)(bit_t
 
 }
 
+void reciever_program(bit_t (*_readClockFunc)(void), bit_t (*_readDataFunc)(void)) {
+
+    cout << "Reciever thread started!" << endl;
+
+    BitBuffer* bitBuffer = new BitBuffer();
+
+    cout << "Initialized BitBuffer object." << endl;
+
+    bitBuffer->registerClockReadFunction(_readClockFunc);
+    bitBuffer->registerDataReadFunction(_readDataFunc);
+
+    cout << "Assigned callbacks." << endl;
+
+    while (true) {
+        if (bitBuffer->listenForOpenConnection()) {
+            cout << "Message present!" << endl;
+
+            bitBuffer->recordIncomingData(); // Records the bitstream until the entire message has been sent
+            
+            if (bitBuffer->getBytes() == nullptr) {continue;}
+
+            int firstBitValue = (int)bitBuffer->getBytes()[0].getValue();
+            
+            cout << "Recieved value: " << firstBitValue << endl;
+
+        }
+    }
+}
+
+
 
 int main() {
     thread t_sender(sender_program, writeClock, writeData);
+    thread t_reciever(reciever_program, readClock, readData);
     t_sender.join();
+    t_reciever.join();
 }
