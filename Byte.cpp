@@ -17,6 +17,10 @@ void Byte::setBits(bool* _bits) {
     }
 }
 
+const bool Byte::getBit(const byte_t _index) {
+    return bits[_index];
+}
+
 const byte_t Byte::getValue() {
     byte_t value = 0;
     int j = 7;

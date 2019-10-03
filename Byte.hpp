@@ -13,6 +13,8 @@ class Byte {
 
     void setBits(bool* bits);
 
+    const bool getBit(const byte_t _index);
+
     const byte_t getValue();
 
 };
